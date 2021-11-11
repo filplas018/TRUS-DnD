@@ -38,6 +38,7 @@ app.UseTus(httpContext =>
             OnFileCompleteAsync = async eventContext =>
             {
                 ITusFile file = await eventContext.GetFileAsync();
+                await fsm.StoreTus(file,eventContext);
             }
         }
     };

@@ -9,7 +9,6 @@ namespace TUSDemo.Services
         public async Task StoreTus(ITusFile file, FileCompleteContext fileCompleteContext)
         {
             Dictionary<string, Metadata> metadata = await file.GetMetadataAsync(fileCompleteContext.CancellationToken);
-
         }
     }
 }
