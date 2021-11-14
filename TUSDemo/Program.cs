@@ -1,15 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using TUSDemo.Data;
 using TUSDemo.Services;
 using tusdotnet;
 using tusdotnet.Interfaces;
 using tusdotnet.Models;
+using tusdotnet.Models.Configuration;
 using tusdotnet.Stores;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<FileStorageManager>();
+builder.Services.AddScoped<FileStorageManager>();
 
 var app = builder.Build();
 
@@ -24,9 +31,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseTus(httpContext => 
+app.UseTus(httpContext =>
 {
-    var uploadPath = Path.Combine(app.Environment.ContentRootPath, "Uploads");
+    var uploadPath = Path.Combine(app.Environment.ContentRootPath, "Files");
     var fsm = httpContext.RequestServices.GetService<FileStorageManager>();
     var TUSconf = new DefaultTusConfiguration
     {
@@ -34,17 +41,16 @@ app.UseTus(httpContext =>
         UrlPath = "/files",
         MaxAllowedUploadSizeInBytes = 100000000,
         Events = new tusdotnet.Models.Configuration.Events
-        { 
+        {
             OnFileCompleteAsync = async eventContext =>
             {
                 ITusFile file = await eventContext.GetFileAsync();
-                await fsm.StoreTus(file,eventContext);
+                await fsm.StoreTus(file, eventContext);
             }
         }
     };
     return TUSconf;
 });
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
