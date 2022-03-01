@@ -42,15 +42,21 @@ namespace TUSDemo.Controllers
         [HttpPut("{sourceOrder}/{destOrder}")]
         public async Task<ActionResult> ChangeOrder(int sourceOrder, int destOrder)
         {
+            var opics = _context.Files.ToList();
+            var pics = _context.Files.OrderBy(x=>x.OrderNumber).ToList();
             var sourcePic = _context.Files.Where(x=>x.OrderNumber == sourceOrder).FirstOrDefault();
-            var destinationPic = _context.Files.Where(x => x.OrderNumber == destOrder).FirstOrDefault();
-            if (sourcePic!=null && destinationPic!=null)
+            if(sourcePic != null)
             {
-                sourcePic.OrderNumber = destOrder;
-                destinationPic.OrderNumber = sourceOrder;
-            }
-            _context.SaveChangesAsync();
+                pics.Remove(sourcePic);
+                pics.Insert(destOrder, sourcePic);
+                for(int i = 0; i < pics.Count(); i++)
+                {
+                    pics[i].OrderNumber = i;
+                    _context.Files.ToArray()[i] = pics[i];
+                }
 
+                await _context.SaveChangesAsync();
+            }
             return Ok();
         }
 
