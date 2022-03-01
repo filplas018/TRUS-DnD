@@ -12,8 +12,8 @@ using TUSDemo.Data;
 namespace TUSDemo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211114215608_FileStorage")]
-    partial class FileStorage
+    [Migration("20220301082634_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,9 @@ namespace TUSDemo.Migrations
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("OriginalName")
                         .IsRequired()

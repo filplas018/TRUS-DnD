@@ -31,6 +31,9 @@ namespace TUSDemo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("int");
+
                     b.Property<string>("OriginalName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

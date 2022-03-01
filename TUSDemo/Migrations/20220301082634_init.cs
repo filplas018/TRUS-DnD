@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TUSDemo.Migrations
 {
-    public partial class FileStorage : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,6 +15,7 @@ namespace TUSDemo.Migrations
                 {
                     StoredFileId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     OriginalName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderNumber = table.Column<int>(type: "int", nullable: false),
                     ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Uploaded = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Size = table.Column<long>(type: "bigint", nullable: false)

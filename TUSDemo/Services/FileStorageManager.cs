@@ -23,7 +23,13 @@ namespace TUSDemo.Services
             Dictionary<string, Metadata> metadata = await file.GetMetadataAsync(fileCompleteContext.CancellationToken);
             string? filename = metadata.FirstOrDefault(m => m.Key == "filename").Value.GetString(System.Text.Encoding.UTF8);
             string? filetype = metadata.FirstOrDefault(m => m.Key == "filetype").Value.GetString(System.Text.Encoding.UTF8);
-            await CreateAsync(new StoredFile { StoredFileId = file.Id, OriginalName = filename, Uploaded = DateTime.Now, ContentType = filetype});
+            var lastPic = _context.Files.OrderByDescending(x => x.OrderNumber).FirstOrDefault();
+            int maxNum=-1;
+            if (lastPic != null)
+            {
+                maxNum = lastPic.OrderNumber;
+            }
+            await CreateAsync(new StoredFile { StoredFileId = file.Id, OriginalName = filename,OrderNumber=maxNum+1, Uploaded = DateTime.Now, ContentType = filetype});
         }
 
         public async Task<ICollection<StoredFile>> ListAsync()
@@ -33,6 +39,8 @@ namespace TUSDemo.Services
 
         public async Task<StoredFile> CreateAsync(StoredFile fileRecord)
         {
+            
+
             _context.Files.Add(fileRecord);
             await _context.SaveChangesAsync();
             return fileRecord;
